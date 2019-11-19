@@ -30,6 +30,8 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 
 func returnAllArticles(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllArticles")
+
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(Articles)
 }
 
@@ -38,6 +40,7 @@ func returnSingleArticle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 
+	w.Header().Set("Content-Type", "application/json")
 	// Loop over all of our Articles
 	// if the article.Id equals the key we pass in
 	// return the article encoded as JSON
@@ -59,6 +62,7 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	// our new Article
 	Articles = append(Articles, article)
 
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(article)
 }
 
@@ -86,6 +90,7 @@ func updateArticle(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(article)
 }
 
