@@ -62,6 +62,33 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(article)
 }
 
+func updateArticle(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint Hit: updateArticle")
+	// once again, we will need to parse the path parameters
+	vars := mux.Vars(r)
+	// we will need to extract the `id` of the article we
+	// wish to delete
+	id := vars["id"]
+
+	// get the body of our POST request
+	// return the string response containing the request body
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	var article Article
+	json.Unmarshal(reqBody, &article)
+
+	// we then need to loop through all our articles
+	for index, a := range Articles {
+		// if our id path parameter matches one of our
+		// articles
+		if a.ID == id {
+			// updates our Article that match the ID
+			Articles[index] = article
+		}
+	}
+
+	json.NewEncoder(w).Encode(article)
+}
+
 func deleteArticle(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: deleteArticle")
 	// once again, we will need to parse the path parameters
@@ -94,6 +121,8 @@ func handleRequests() {
 	// NOTE: Ordering is important here! This has to be defined before
 	// the other `/article` endpoint.
 	myRouter.HandleFunc("/article", createNewArticle).Methods("POST")
+	// add our new PUT endpoint here
+	myRouter.HandleFunc("/article/{id}", updateArticle).Methods("PUT")
 	// add our new DELETE endpoint here
 	myRouter.HandleFunc("/article/{id}", deleteArticle).Methods("DELETE")
 	myRouter.HandleFunc("/article/{id}", returnSingleArticle)
