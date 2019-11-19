@@ -25,7 +25,7 @@ var Articles []Article
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the HomePage!")
-	fmt.Println("Endpoint Hit: homePage")
+	fmt.Printf("Endpoint Hit: homePage from %s, User-Agent: %s\n", r.RemoteAddr, r.Header.Get("User-Agent"))
 }
 
 func returnAllArticles(w http.ResponseWriter, r *http.Request) {
