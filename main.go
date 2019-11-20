@@ -6,16 +6,18 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
 //Article declare a struct for artical
 type Article struct {
-	ID      string `json:"Id"`
-	Title   string `json:"Title"`
-	Desc    string `json:"desc"`
-	Content string `json:"content"`
+	ID      string    `json:"Id"`
+	Title   string    `json:"Title"`
+	Desc    string    `json:"desc"`
+	Publish time.Time `json:"publish"`
+	Content string    `json:"content"`
 }
 
 // Articles declare a global Article array
@@ -58,6 +60,7 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var article Article
 	json.Unmarshal(reqBody, &article)
+	article.Publish = time.Now()
 	// update our global Articles array to include
 	// our new Article
 	Articles = append(Articles, article)
@@ -89,6 +92,8 @@ func updateArticle(w http.ResponseWriter, r *http.Request) {
 			Articles[index] = article
 		}
 	}
+	//Bug: will not update the publish time because struct copy
+	article.Publish = time.Now()
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(article)
@@ -142,8 +147,8 @@ func main() {
 	fmt.Println("Rest API v2.0 - Mux Routers")
 
 	Articles = []Article{
-		Article{ID: "1", Title: "Hello", Desc: "Article Description", Content: "Article Content"},
-		Article{ID: "2", Title: "Hello 2", Desc: "Article Description", Content: "Article Content"},
+		Article{ID: "1", Title: "Hello", Desc: "Article Description", Publish: time.Now(), Content: "Article Content"},
+		Article{ID: "2", Title: "Hello 2", Desc: "Article Description", Publish: time.Now(), Content: "Article Content"},
 	}
 
 	handleRequests()
